@@ -1,0 +1,31 @@
+{
+  "name": "chaospay",
+  "version": "0.0.0",
+  "description": "A local-first fault-injection test runner for webhook-driven systems.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "chaospay": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tengbesabe22/chaos-pay.git",
+    "directory": "apps/cli"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@chaospay/core": "workspace:^"
+  }
+}
