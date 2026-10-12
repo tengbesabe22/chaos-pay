@@ -13,7 +13,7 @@ recording, replay, and chaos scenarios are not implemented yet.
 
 ## Development
 
-Requirements: Node.js 22.13+ (22.x) or 24+ and pnpm 10.32.1.
+Requirements: Node.js 22.13+ (22.x) or 24+ and pnpm 12.11.2.
 
 ```sh
 pnpm install
@@ -26,6 +26,12 @@ Individual checks are available as `pnpm build`, `pnpm typecheck`, `pnpm lint`,
 Vitest currently permits zero tests because this PR introduces no product
 behavior. Add behavioral tests and remove `--passWithNoTests` when implementing
 core delivery.
+
+TypeScript is kept at 6.0.3 because the latest `typescript-eslint` peer range
+requires TypeScript below 6.1. Node typings follow the Node 24 runtime used
+for development. Other development tools use the latest stable releases accepted by pnpm’s
+default release-age policy as of this update (Vitest 5.0.3; 5.0.4 is still
+filtered). The lockfile records exact resolutions.
 
 ## Packages
 
