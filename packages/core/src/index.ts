@@ -6,3 +6,5 @@ export type {
   ChaosScenario,
   EventMatch,
 } from './scenario.js';
+export { deliverWebhook } from './send.js';
+export type { DeliverWebhookOptions } from './send.js';

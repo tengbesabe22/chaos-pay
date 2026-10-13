@@ -108,3 +108,9 @@ export function inspectPayload(value: ChaosEvent): void {
   // @ts-expect-error Delivery mutations must not overwrite event occurrence time.
   value.timestamp = '2026-10-14T00:00:00.000Z';
 }
+
+// The executable API must also resolve through the published package export.
+export const sender: (
+  options: import('@chaospay/core').DeliverWebhookOptions,
+) => Promise<DeliveryResult> =
+  null as unknown as typeof import('@chaospay/core').deliverWebhook;
