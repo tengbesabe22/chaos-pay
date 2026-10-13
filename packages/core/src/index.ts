@@ -1,2 +1,8 @@
-// Public contracts and delivery behavior will be introduced in subsequent PRs.
-export {};
+export type { ChaosEvent, Target } from './event.js';
+export type { DeliveryResult } from './delivery.js';
+export type {
+  ChaosAction,
+  ChaosRule,
+  ChaosScenario,
+  EventMatch,
+} from './scenario.js';
