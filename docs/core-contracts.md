@@ -1,8 +1,8 @@
 # Core contracts
 
 `@chaospay/core` provides provider-independent TypeScript contracts for webhook
-fault-injection testing. These are type-only exports. Delivery and scenario
-execution are not implemented yet.
+fault-injection testing. The package also exports `deliverWebhook` for single-attempt JSON delivery.
+Scenario execution is not implemented yet.
 
 ```ts
 import type {
@@ -148,12 +148,53 @@ implementation will be introduced with the chaos engine.
 
 ## Validation boundary
 
-TypeScript catches missing fields and incompatible union members. These contracts
+TypeScript catches missing fields and incompatible union members. The type contracts alone
 do not perform runtime validation: numeric ranges, ISO timestamps, URL validity,
-and header collisions must be checked by future public entry points. In
+and header collisions require runtime checks. The sender validates its URL,
+headers, event identity, timeout, and JSON serialization before delivery; scenario
+and occurrence-timestamp validation remain outside this sender. In
 particular, `status: number` does not statically enforce the HTTP status ranges
 associated with each outcome.
 
 Run `pnpm test` to compile consumer examples against the built package exports.
 The contract checks include valid variants and expected compilation failures for
 invalid combinations. They do not implement or test HTTP delivery behavior.
+
+## Send a webhook
+
+```ts
+import { deliverWebhook } from '@chaospay/core';
+
+const result = await deliverWebhook({
+  event: {
+    id: 'evt_123',
+    type: 'payment.captured',
+    payload: { amount: 10000 },
+  },
+  target: { url: 'http://localhost:3000/webhook' },
+  timeoutMs: 5000,
+});
+```
+
+The sender posts `JSON.stringify(event.payload)` directly, without an envelope.
+JSON serialization follows standard JavaScript semantics (for example, undefined
+object properties are omitted). Circular structures, BigInt, and top-level values
+that produce no JSON reject before sending.
+
+The default content type is `application/json`; event and then target headers
+can override it. Header names must be valid and unique within each map ignoring
+case. Transport-managed headers (`host`, `content-length`, `transfer-encoding`,
+`connection`, `upgrade`, `expect`, `trailer`, `keep-alive`) are rejected.
+
+The timeout defaults to 5000ms and must be an integer from 1 to 2147483647.
+It covers the request and complete response consumption. Response chunks are
+discarded incrementally, without storing the response body. A body that stalls
+can therefore produce a timeout even after HTTP headers arrive. A broken response
+stream produces a network failure. Redirects are not followed.
+
+Invalid event identifiers, target URLs, headers, timeouts, and unserializable
+payloads reject the promise. Targets must use HTTP(S) without URL credentials.
+HTTP and transport failures instead resolve to a `DeliveryResult`. Each call
+creates a new delivery and attempt identity with attempt number 1. There are no
+retries or scenario transformations. Event occurrence timestamps are not used
+for scheduling or changed by the sender.

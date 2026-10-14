@@ -13,7 +13,7 @@ and in CI, without an account or cloud infrastructure.
 ## Project status
 
 ChaosPay is in early development. This repository currently contains the
-TypeScript workspace, core type contracts, and a CLI scaffold. Webhook delivery, recording, replay,
+TypeScript workspace, core contracts, a single-attempt HTTP webhook sender, and a CLI scaffold. Recording, replay,
 and fault injection are not available yet. No npm release is available.
 
 ## Develop locally
@@ -28,7 +28,7 @@ pnpm check
 ```
 
 `pnpm check` runs formatting checks, linting, typechecking, the test runner, and
-package builds. Behavioral tests will be added as functionality is implemented.
+package builds. Tests cover core contracts and HTTP delivery behavior.
 
 To run the CLI scaffold after building:
 
@@ -48,8 +48,7 @@ The CLI currently prints a placeholder message.
 ## Core API
 
 See the [core contracts](docs/core-contracts.md) for event, target, delivery-result,
-and scenario types, with examples and delivery semantics. These are type-only
-exports; an execution API is not available yet.
+and scenario types, with examples and delivery semantics. The core also exports `deliverWebhook` for single-attempt JSON delivery.
 
 ## Contributing
 
