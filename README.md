@@ -13,7 +13,7 @@ and in CI, without an account or cloud infrastructure.
 ## Project status
 
 ChaosPay is in early development. This repository currently contains the
-TypeScript workspace, core contracts, a single-attempt HTTP webhook sender, and a CLI scaffold. Recording, replay,
+TypeScript workspace, core contracts, a single-attempt HTTP webhook sender, and a CLI `send` command. Recording, replay,
 and fault injection are not available yet. No npm release is available.
 
 ## Develop locally
@@ -30,13 +30,33 @@ pnpm check
 `pnpm check` runs formatting checks, linting, typechecking, the test runner, and
 package builds. Tests cover core contracts and HTTP delivery behavior.
 
-To run the CLI scaffold after building:
+To see the available CLI options after building:
 
 ```sh
-node apps/cli/dist/index.js
+pnpm chaospay --help
 ```
 
-The CLI currently prints a placeholder message.
+## Send a webhook
+
+With your webhook endpoint running, send a JSON payload from the local build:
+
+```sh
+pnpm chaospay send \
+  --target http://localhost:3000/webhook \
+  --type payment.captured \
+  --data '{"paymentId":"pay_123","amount":10000}'
+```
+
+`--target`, `--type`, and `--data` are required. The request body is the JSON
+payload directly; the event type is report metadata and is not added to the body.
+Add `--timeout 3000` to change the default 5000ms delivery deadline. Each option
+can appear only once. Use `send --help` for usage.
+
+The CLI prints the event type, target, response status or failure, and elapsed
+milliseconds. Completed delivery reports go to stdout; argument errors and
+unexpected execution errors go to stderr. Exit codes are `0` for a successful
+delivery or help, `1` for a delivery failure, and `2` for invalid arguments.
+Redirects are reported as HTTP failures. There are no automatic retries.
 
 ## Repository structure
 
