@@ -97,6 +97,10 @@ and scenario types, with examples and delivery semantics. The core also exports 
 
 ## Contributing
 
+GitHub Actions runs the project checks on Node 22 and 24 for pull requests and
+pushes to `main`. See the [CI guide](docs/ci.md) for workflow details and how to
+investigate failures.
+
 Development commands:
 
 ```sh
