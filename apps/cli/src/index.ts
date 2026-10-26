@@ -1,3 +1,9 @@
 #!/usr/bin/env node
 
-console.log('ChaosPay: CLI scaffold. Commands are not implemented yet.');
+import process from 'node:process';
+import { runCli } from './cli.js';
+
+process.exitCode = await runCli(process.argv.slice(2), {
+  stdout: process.stdout,
+  stderr: process.stderr,
+});
