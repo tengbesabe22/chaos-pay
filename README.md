@@ -36,16 +36,40 @@ To see the available CLI options after building:
 pnpm chaospay --help
 ```
 
-## Send a webhook
+## Try it locally
 
-With your webhook endpoint running, send a JSON payload from the local build:
+After installing dependencies, build the CLI:
+
+```sh
+pnpm build
+```
+
+In terminal 1, start the included receiver:
+
+```sh
+pnpm example:webhook
+```
+
+It listens on `127.0.0.1:3000`. In terminal 2, from the same repository, send a webhook:
 
 ```sh
 pnpm chaospay send \
-  --target http://localhost:3000/webhook \
+  --target http://127.0.0.1:3000/webhook \
   --type payment.captured \
   --data '{"paymentId":"pay_123","amount":10000}'
 ```
+
+The receiver logs the payload, and the CLI reports `200 OK` with elapsed
+milliseconds. Stop the receiver with Ctrl+C. If port 3000 is occupied, stop the
+process using it before starting the example.
+
+The [example receiver](examples/basic-webhook/server.mjs) accepts JSON bodies up
+to 64 KiB. It returns `400` for invalid JSON, `413` for oversized bodies, `404`
+for unknown paths, and `405` for methods other than POST on `/webhook`. It is a
+local debugging example with no persistence, signature verification, or business
+logic. You can also point `--target` at your own webhook endpoint.
+
+## Send options
 
 `--target`, `--type`, and `--data` are required. The request body is the JSON
 payload directly; the event type is report metadata and is not added to the body.
@@ -60,10 +84,11 @@ Redirects are reported as HTTP failures. There are no automatic retries.
 
 ## Repository structure
 
-| Directory       | Purpose                                      |
-| --------------- | -------------------------------------------- |
-| `packages/core` | Provider-independent webhook testing library |
-| `apps/cli`      | Command-line interface                       |
+| Directory                | Purpose                                      |
+| ------------------------ | -------------------------------------------- |
+| `packages/core`          | Provider-independent webhook testing library |
+| `apps/cli`               | Command-line interface                       |
+| `examples/basic-webhook` | Local HTTP receiver for the quick-start      |
 
 ## Core API
 

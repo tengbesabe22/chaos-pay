@@ -7,6 +7,7 @@
   },
   "scripts": {
     "chaospay": "node apps/cli/dist/index.js",
+    "example:webhook": "node examples/basic-webhook/server.mjs",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
